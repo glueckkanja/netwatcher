@@ -95,6 +95,11 @@ namespace NetWatcher
         {
             var connections = GetCurrentConnectionsByNetwork(e.NetworkID);
 
+            if (connections == null)
+            {
+                return;
+            }
+
             lock (_connections)
             {
                 RemoveByNetworkID(e.NetworkID);
@@ -107,6 +112,11 @@ namespace NetWatcher
         private void NetworkConnectivityChanged(object sender, NetworkEventConnectivityArgs e)
         {
             var connections = GetCurrentConnectionsByNetwork(e.NetworkID);
+
+            if (connections == null)
+            {
+                return;
+            }
 
             lock (_connections)
             {
@@ -149,47 +159,46 @@ namespace NetWatcher
 
         private List<Connection> GetCurrentConnections()
         {
-            var enumConnections = _manager.GetNetworkConnections();
-            var connections = enumConnections.Cast<INetworkConnection>().ToList();
-
-            var results = new List<Connection>();
+            IEnumNetworkConnections enumConnections = null;
+            List<INetworkConnection> connections = new List<INetworkConnection>();
 
             try
             {
-                foreach (INetworkConnection connection in enumConnections)
-                {
-                    results.Add(ConvertConnection(connection));
-                }
+                enumConnections = _manager.GetNetworkConnections();
+                connections.AddRange(enumConnections.Cast<INetworkConnection>());
+
+                return connections.Select(ConvertConnection).ToList();
+            }
+            catch (COMException e) when ((uint)e.ErrorCode == 0x8000FFFF)
+            {
+                return null;
             }
             finally
             {
                 foreach (var connection in connections) ReleaseComObject(connection);
                 ReleaseComObject(enumConnections);
             }
-
-            return results;
         }
 
         private List<Connection> GetCurrentConnectionsByNetwork(Guid networkID)
         {
             INetwork network = null;
             IEnumNetworkConnections enumConnections = null;
-            List<INetworkConnection> connections = null;
+            List<INetworkConnection> connections = new List<INetworkConnection>();
 
             try
             {
-                network = _manager.GetNetwork(networkID);
-                enumConnections = network.GetNetworkConnections();
-                connections = enumConnections.Cast<INetworkConnection>().ToList();
-
                 var results = new List<Connection>();
 
-                foreach (INetworkConnection connection in enumConnections)
-                {
-                    results.Add(ConvertConnection(connection));
-                }
+                network = _manager.GetNetwork(networkID);
+                enumConnections = network.GetNetworkConnections();
+                connections.AddRange(enumConnections.Cast<INetworkConnection>());
 
-                return results;
+                return connections.Select(ConvertConnection).ToList();
+            }
+            catch (COMException e) when ((uint)e.ErrorCode == 0x8000FFFF)
+            {
+                return null;
             }
             finally
             {
