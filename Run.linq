@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="bin\Debug\NetWatcher.dll">bin\Debug\NetWatcher.dll</Reference>
+  <Reference Relative="bin\Debug\net452\netwatcher.dll">C:\Users\janberdel\Code\OSS\netwatcher\bin\Debug\net452\netwatcher.dll</Reference>
   <Namespace>NetWatcher</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
 </Query>

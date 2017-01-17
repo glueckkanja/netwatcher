@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "Interop.NetworkList": "1.0.0"
+  },
+  "frameworks": {
+    "net452": {}
+  }
+}
