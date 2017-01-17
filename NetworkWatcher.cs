@@ -93,6 +93,9 @@ namespace NetWatcher
 
         public TimeSpan EventBufferDuration { get; set; } = TimeSpan.FromSeconds(5);
 
+        public bool IsConnected => _manager.IsConnected;
+        public bool IsConnectedToInternet => _manager.IsConnectedToInternet;
+
         private async void NetworkAddedAsync(object sender, NetworkEventArgs e)
         {
             var connections = GetCurrentConnectionsByNetwork(e.NetworkID);
