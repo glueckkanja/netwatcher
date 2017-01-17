@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 
 namespace NetWatcher
 {
@@ -11,5 +12,6 @@ namespace NetWatcher
         public bool IsConnected { get; internal set; }
         public bool IsConnectedToInternet { get; internal set; }
         public Network Network { get; internal set; }
+        public NetworkInterface Interface { get; set; }
     }
 }

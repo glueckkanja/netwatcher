@@ -12,26 +12,22 @@ namespace NetWatcher
 
         public void NetworkAdded(Guid networkId)
         {
-            var handler = Added;
-            handler?.Invoke(this, new NetworkEventArgs(networkId));
+            Added?.Invoke(this, new NetworkEventArgs(networkId));
         }
 
         public void NetworkConnectivityChanged(Guid networkId, NLM_CONNECTIVITY newConnectivity)
         {
-            var handler = ConnectivityChanged;
-            handler?.Invoke(this, new NetworkEventConnectivityArgs(networkId, newConnectivity));
+            ConnectivityChanged?.Invoke(this, new NetworkEventConnectivityArgs(networkId, newConnectivity));
         }
 
         public void NetworkDeleted(Guid networkId)
         {
-            var handler = Deleted;
-            handler?.Invoke(this, new NetworkEventArgs(networkId));
+            Deleted?.Invoke(this, new NetworkEventArgs(networkId));
         }
 
         public void NetworkPropertyChanged(Guid networkId, NLM_NETWORK_PROPERTY_CHANGE flags)
         {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new NetworkEventPropertyArgs(networkId, flags));
+            PropertyChanged?.Invoke(this, new NetworkEventPropertyArgs(networkId, flags));
         }
     }
 }

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncLock.cs" />
     <Compile Include="Connectivity.cs" />
     <Compile Include="DomainType.cs" />
     <Compile Include="Connection.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="NetworkEventArgs.cs" />
     <Compile Include="NetworkWatcher.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="NetworkWatcherEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NetworkEventSink.cs" />
   </ItemGroup>
