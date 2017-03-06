@@ -1,0 +1,23 @@
+build:
+  stage: build
+  script: |
+    dotnet restore
+    dotnet pack -c Release
+  artifacts:
+    paths:
+      - bin/Release/netwatcher.*.nupkg
+  tags:
+    - jenkins
+    - vs2015
+
+deploy:
+  stage: deploy
+  when: manual
+  script: |
+    cd bin/Release/
+    nuget push -src https://www.nuget.org/api/v2 netwatcher.*.nupkg
+  dependencies:
+    - build
+  tags:
+    - jenkins
+    - vs2015
