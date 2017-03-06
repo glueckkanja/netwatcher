@@ -15,7 +15,7 @@ deploy:
   when: manual
   script: |
     cd bin/Release/
-    nuget push -src https://www.nuget.org/api/v2 netwatcher.*.nupkg
+    nuget push netwatcher.*.nupkg
   dependencies:
     - build
   tags:
