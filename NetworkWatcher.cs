@@ -98,15 +98,23 @@ namespace NetWatcher
 
         private async void NetworkAddedAsync(object sender, NetworkEventArgs e)
         {
-            var connections = GetCurrentConnectionsByNetwork(e.NetworkID);
+            IEnumerable<Connection> connections = null;
 
-            if (connections == null)
-                return;
-
-            using (await _connectionsAsyncLock.LockAsync())
+            try
             {
-                _connectionsAsync.RemoveAll(x => x.Network.NetworkID == e.NetworkID);
-                _connectionsAsync.AddRange(connections);
+                connections = GetCurrentConnectionsByNetwork(e.NetworkID);
+            }
+            catch
+            {
+            }
+
+            if (connections != null && connections.Any())
+            {
+                using (await _connectionsAsyncLock.LockAsync())
+                {
+                    _connectionsAsync.RemoveAll(x => x.Network.NetworkID == e.NetworkID);
+                    _connectionsAsync.AddRange(connections);
+                }
             }
 
             RestartBufferTimer();
@@ -114,15 +122,23 @@ namespace NetWatcher
 
         private async void NetworkConnectivityChangedAsync(object sender, NetworkEventConnectivityArgs e)
         {
-            var connections = GetCurrentConnectionsByNetwork(e.NetworkID);
+            IEnumerable<Connection> connections = null;
 
-            if (connections == null)
-                return;
-
-            using (await _connectionsAsyncLock.LockAsync())
+            try
             {
-                _connectionsAsync.RemoveAll(x => x.Network.NetworkID == e.NetworkID);
-                _connectionsAsync.AddRange(connections);
+                connections = GetCurrentConnectionsByNetwork(e.NetworkID);
+            }
+            catch
+            {
+            }
+
+            if (connections != null && connections.Any())
+            {
+                using (await _connectionsAsyncLock.LockAsync())
+                {
+                    _connectionsAsync.RemoveAll(x => x.Network.NetworkID == e.NetworkID);
+                    _connectionsAsync.AddRange(connections);
+                }
             }
 
             RestartBufferTimer();
