@@ -98,7 +98,7 @@ namespace NetWatcher
 
         private async void NetworkAddedAsync(object sender, NetworkEventArgs e)
         {
-            IEnumerable<Connection> connections = null;
+            List<Connection> connections = null;
 
             try
             {
@@ -122,7 +122,7 @@ namespace NetWatcher
 
         private async void NetworkConnectivityChangedAsync(object sender, NetworkEventConnectivityArgs e)
         {
-            IEnumerable<Connection> connections = null;
+            List<Connection> connections = null;
 
             try
             {
@@ -177,55 +177,68 @@ namespace NetWatcher
             ConnectionsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private IEnumerable<Connection> GetCurrentConnections()
+        private List<Connection> GetCurrentConnections()
         {
             try
             {
                 return _manager.GetNetworkConnections()
                     .Cast<INetworkConnection>()
-                    .Select(ConvertConnection);
+                    .ToList()
+                    .Select(ConvertConnection)
+                    .Where(x => x != null)
+                    .ToList();
             }
             catch (COMException e) when ((uint)e.ErrorCode == 0x8000FFFF)
             {
-                return null;
+                return new List<Connection>();
             }
         }
 
-        private IEnumerable<Connection> GetCurrentConnectionsByNetwork(Guid networkID)
+        private List<Connection> GetCurrentConnectionsByNetwork(Guid networkID)
         {
             try
             {
                 return _manager.GetNetwork(networkID).GetNetworkConnections()
                     .Cast<INetworkConnection>()
-                    .Select(ConvertConnection);
+                    .ToList()
+                    .Select(ConvertConnection)
+                    .Where(x => x != null)
+                    .ToList();
             }
             catch (COMException e) when ((uint)e.ErrorCode == 0x8000FFFF)
             {
-                return null;
+                return new List<Connection>();
             }
         }
 
         private Connection ConvertConnection(INetworkConnection connection)
         {
-            var network = connection.GetNetwork();
-
-            uint crLo, crHi, coLo, coHi;
-            network.GetTimeCreatedAndConnected(out crLo, out crHi, out coLo, out coHi);
-
-            var adapterID = connection.GetAdapterId();
-
-            return new Connection
+            try
             {
-                AdapterID = adapterID,
+                var network = connection.GetNetwork();
 
-                IsConnected = connection.IsConnected,
-                IsConnectedToInternet = connection.IsConnectedToInternet,
-                ConnectionID = connection.GetConnectionId(),
-                Connectivity = (Connectivity)connection.GetConnectivity(),
-                DomainType = (DomainType)connection.GetDomainType(),
+                uint crLo, crHi, coLo, coHi;
+                network.GetTimeCreatedAndConnected(out crLo, out crHi, out coLo, out coHi);
 
-                Network = ConvertNetwork(network),
-            };
+                var adapterID = connection.GetAdapterId();
+
+                return new Connection
+                {
+                    AdapterID = adapterID,
+
+                    IsConnected = connection.IsConnected,
+                    IsConnectedToInternet = connection.IsConnectedToInternet,
+                    ConnectionID = connection.GetConnectionId(),
+                    Connectivity = (Connectivity)connection.GetConnectivity(),
+                    DomainType = (DomainType)connection.GetDomainType(),
+
+                    Network = ConvertNetwork(network),
+                };
+            }
+            catch (COMException e) when ((uint)e.ErrorCode == 0x8000FFFF)
+            {
+                return null;
+            }
         }
 
         private Network ConvertNetwork(INetwork network)
