@@ -1,14 +1,13 @@
 build:
   stage: build
   script: |
-    dotnet restore
-    dotnet pack -c Release
+    msbuild /t:Restore
+    msbuild /t:Pack /p:Configuration=Release
   artifacts:
     paths:
-      - bin/Release/netwatcher.*.nupkg
+      - bin/Release/*
   tags:
-    - jenkins
-    - vs2015
+    - vs2017
 
 deploy:
   stage: deploy
@@ -19,5 +18,5 @@ deploy:
   dependencies:
     - build
   tags:
-    - jenkins
-    - vs2015
+    - nuget
+    - vs2017
