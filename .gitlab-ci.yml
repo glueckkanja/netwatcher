@@ -7,8 +7,8 @@ build:
     paths:
       - bin/Release/netwatcher.*.nupkg
   tags:
-    - dotnet
-    - vs2017
+    - jenkins
+    - vs2015
 
 deploy:
   stage: deploy
@@ -19,5 +19,5 @@ deploy:
   dependencies:
     - build
   tags:
-    - nuget
-    - vs2017
+    - jenkins
+    - vs2015
